@@ -228,7 +228,7 @@ export function lavOpslag(d: KandidatData, tekster: TekstLager, rettelser: Tekst
   };
 }
 
-export const RESERVEREDE = new Set(["login", "guide", "api", "privatliv", "logout", "_next", "favicon.ico", "robots.txt"]);
+export const RESERVEREDE = new Set(["login", "guide", "api", "privatliv", "kladde", "logout", "_next", "favicon.ico", "robots.txt"]);
 
 export function slugify(navn: string): string {
   const s = navn.toLowerCase()

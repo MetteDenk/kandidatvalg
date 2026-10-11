@@ -28,11 +28,12 @@ Testsvarene fra 11/10-2026 kan lægges ind på en bruger: `npm run testsvar -- d
 |---|---|
 | `lib/indhold.ts` | Emnerne A-M, spørgsmålene, sektioner, undersider og kandidatens data (`KandidatData`) |
 | `lib/design.ts` | 4 layouts, 9 paletter, 4 typografier |
-| `components/Guide.tsx` | Guiden med de 13 trin og visningen af den færdige side (ret, offentliggør, lad ligge, fjern) |
+| `components/Guide.tsx` | Guiden med de 13 trin og visningen af den færdige side (ret, offentliggør, del kladde, lad ligge, fjern) |
 | `components/KandidatSide.tsx` | Kandidatsiden. Bruges både som forhåndsvisning og som offentlig side |
 | `lib/ai/tekster.ts` | Fra stikord til tekst med Mistral. Kun felter med nye eller ændrede stikord skrives om |
-| `app/guide/actions.ts` | Autogemning, "Lav min side", rettelser, offentliggørelse og sletning |
+| `app/guide/actions.ts` | Autogemning, "Lav min side", rettelser, offentliggørelse, delelink og sletning |
 | `app/[slug]/` | Den offentlige side: `/<navn>`, `/<navn>/mine-maerkesager`, `/om-mig`, `/kontakt` |
+| `app/kladde/` | Kladden via hemmeligt delelink: `/kladde/<delelink>`. Kun læseadgang, ingen login, ikke i søgemaskiner. Kontaktformularen sender ikke |
 | `app/site-actions.ts` | Kontaktformularen. Beskeden sendes til kandidaten og gemmes ikke |
 
 Genbrugt fra Fagspejlet ved kopiering (ikke deling): login med link på mail (`lib/auth.ts`), mailer, Mistral-klienten,

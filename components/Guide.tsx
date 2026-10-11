@@ -13,7 +13,7 @@ import {
   EMNER, OM_SPOERGSMAAL, PAGES, ROLLE_SPOERGSMAAL, SEKTIONER, alleEmneIds, emneInfo, emneOverskrift,
   lavOpslag, pointerIds, type KandidatData, type OmFelt, type PageKey, type TekstLager,
 } from "@/lib/indhold";
-import { fortrydRettelser, gemData, gemRettelse, lavSide, logUd, saetOffentlig, sletAlt } from "@/app/guide/actions";
+import { delKladde, fortrydRettelser, gemData, gemRettelse, lavSide, logUd, lukDelelink, saetOffentlig, sletAlt } from "@/app/guide/actions";
 
 type Props = {
   startData: KandidatData;
@@ -21,6 +21,7 @@ type Props = {
   startRettelser: TekstLager;
   startSlug: string;
   startOffentlig: boolean;
+  startDelelink: string | null;
   harTekster: boolean;
   appUrl: string;
 };
@@ -33,6 +34,9 @@ export function Guide(props: Props) {
   const [rettelser, setRettelser] = useState<TekstLager>(props.startRettelser);
   const [slug, setSlug] = useState(props.startSlug);
   const [offentlig, setOffentlig] = useState(props.startOffentlig);
+  const [delelink, setDelelink] = useState(props.startDelelink);
+  const [visDelelink, setVisDelelink] = useState(false);
+  const [kopieret, setKopieret] = useState(false);
   const [view, setView] = useState<"guide" | "side">(props.harTekster ? "side" : "guide");
   const [page, setPage] = useState<PageKey>("forside");
   const [editing, setEditing] = useState(false);
@@ -310,6 +314,7 @@ export function Guide(props: Props) {
   // ----- Den færdige side -----
   if (view === "side") {
     const url = `${props.appUrl}/${slug}`;
+    const kladdeUrl = `${props.appUrl || (typeof window !== "undefined" ? window.location.origin : "")}/kladde/${delelink}`;
     return (
       <div>
         <div className="toolbar">
@@ -325,6 +330,10 @@ export function Guide(props: Props) {
           {offentlig
             ? <button className="btn small" onClick={async () => { await saetOffentlig(false); setOffentlig(false); setBesked("Siden er trukket tilbage og er ikke længere offentlig. Den ligger her, så du kan vende tilbage til den."); }}>Træk tilbage</button>
             : <button className="btn small primary" onClick={async () => { await saetOffentlig(true); setOffentlig(true); setBesked(""); }}>Offentliggør</button>}
+          <button className={"btn small" + (visDelelink ? " primary" : "")} onClick={async () => {
+            if (visDelelink) { setVisDelelink(false); return; }
+            const r = await delKladde(); setDelelink(r.delelink); setVisDelelink(true); setKopieret(false);
+          }}>Del kladde</button>
           <button className="btn small" onClick={() => setBesked("Siden er gemt og ligger her, til du kommer tilbage. Den er ikke offentlig, før du vælger det.")} disabled={offentlig}>Lad ligge</button>
           <button className="btn small fare" onClick={async () => {
             if (confirm("Vil du fjerne din side? Siden, dine svar, teksterne og billederne slettes, og det kan ikke fortrydes.")) await sletAlt();
@@ -333,6 +342,21 @@ export function Guide(props: Props) {
         </div>
         {offentlig && <div className="notice">Din side er offentlig på <a href={url} target="_blank" rel="noreferrer">{url}</a>. Ændringer slår igennem med det samme.</div>}
         {besked && <div className="notice">{besked}</div>}
+        {visDelelink && (delelink
+          ? <div className="notice">
+              Send dette link til dem, der skal se din kladde. De kan se hele siden uden at logge ind, men de kan ikke rette noget. Siden bliver ikke offentlig, og søgemaskiner viser den ikke.
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center", marginTop: 8 }}>
+                <input readOnly value={kladdeUrl} onFocus={(e) => e.target.select()} style={{ flex: "1 1 320px", minWidth: 0, font: "inherit", padding: "5px 8px" }} />
+                <button className="btn small" onClick={async () => { try { await navigator.clipboard.writeText(kladdeUrl); setKopieret(true); } catch { setKopieret(false); } }}>{kopieret ? "Kopieret" : "Kopiér link"}</button>
+                <a className="btn small" href={kladdeUrl} target="_blank" rel="noreferrer">Åbn</a>
+                <button className="btn small fare" onClick={async () => {
+                  if (confirm("Luk linket? Det holder op med at virke med det samme. Du kan lave et nyt link bagefter.")) {
+                    await lukDelelink(); setDelelink(null); setVisDelelink(false); setBesked("Delelinket er lukket og virker ikke længere.");
+                  }
+                }}>Luk linket</button>
+              </div>
+            </div>
+          : <div className="notice">Der er intet delelink. Tryk på <b>Del kladde</b> for at lave et nyt.</div>)}
         {editing && <div className="notice">
           Klik i en tekst med stiplet ramme, og ret den direkte. Rettelsen gemmes, når du klikker et andet sted.{" "}
           {Object.keys(rettelser).length > 0 && <button className="btn small" onClick={async () => {

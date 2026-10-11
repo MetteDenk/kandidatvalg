@@ -5,10 +5,10 @@ export const dynamic = "force-dynamic";
 type P = { params: Promise<{ slug: string; side: string }> };
 
 export async function generateMetadata({ params }: P) {
-  return metadataFor((await params).slug);
+  return metadataFor({ slug: (await params).slug });
 }
 
 export default async function KandidatUnderside({ params }: P) {
   const { slug, side } = await params;
-  return <Visning slug={slug} side={side} />;
+  return <Visning adgang={{ slug }} side={side} />;
 }

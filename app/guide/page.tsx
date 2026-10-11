@@ -17,6 +17,7 @@ export default async function GuidePage() {
       startRettelser={rettelser}
       startSlug={k.slug}
       startOffentlig={k.published}
+      startDelelink={k.delelink}
       harTekster={!!k.genereretAt}
       appUrl={process.env.APP_URL ?? ""}
     />

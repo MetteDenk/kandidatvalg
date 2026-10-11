@@ -5,9 +5,9 @@ export const dynamic = "force-dynamic";
 type P = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: P) {
-  return metadataFor((await params).slug);
+  return metadataFor({ slug: (await params).slug });
 }
 
 export default async function KandidatForside({ params }: P) {
-  return <Visning slug={(await params).slug} />;
+  return <Visning adgang={{ slug: (await params).slug }} />;
 }

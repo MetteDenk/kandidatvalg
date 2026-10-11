@@ -1,5 +1,6 @@
 "use server";
 
+import { randomBytes } from "node:crypto";
 import { redirect } from "next/navigation";
 import { currentUser, logout } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -71,6 +72,21 @@ export async function saetOffentlig(offentlig: boolean): Promise<{ ok: boolean; 
   const k = await minKandidat();
   await db.kandidat.update({ where: { id: k.id }, data: { published: offentlig } });
   return { ok: true, slug: k.slug };
+}
+
+// Hemmeligt delelink til kladden. Laver et nyt, hvis der ikke er et; ellers
+// gives det eksisterende tilbage. `luk` fjerner linket, så det holder op med at virke.
+export async function delKladde(): Promise<{ delelink: string }> {
+  const k = await minKandidat();
+  if (k.delelink) return { delelink: k.delelink };
+  const delelink = randomBytes(24).toString("base64url");
+  await db.kandidat.update({ where: { id: k.id }, data: { delelink } });
+  return { delelink };
+}
+
+export async function lukDelelink(): Promise<void> {
+  const k = await minKandidat();
+  await db.kandidat.update({ where: { id: k.id }, data: { delelink: null } });
 }
 
 // "Fjern": sletter siden, svarene, teksterne og alle uploadede billeder (via
