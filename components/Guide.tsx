@@ -263,7 +263,24 @@ export function Guide(props: Props) {
   const sidst = step === steps.length - 1;
   const gaaTil = (n: number) => { setFejl(""); opdater((x) => { x.step = n; }); window.scrollTo(0, 0); };
 
+  const frem = () => {
+    if (st.valid && !st.valid()) { setFejl(st.msg ?? ""); return; }
+    if (sidst) lav(); else gaaTil(step + 1);
+  };
+
+  // Forrige og Næste står både øverst og nederst på hvert trin.
+  const nav = (
+    <div className="nav">
+      <button className="btn" disabled={step === 0} onClick={() => gaaTil(step - 1)}>Forrige</button>
+      {!sidst && <button className="btn link" onClick={() => gaaTil(steps.length - 1)}>Gå til sidste trin</button>}
+      <button className="btn primary" onClick={frem}>{sidst ? "Lav min side" : "Næste"}</button>
+    </div>
+  );
+
   async function lav() {
+    // Man kan hoppe direkte til sidste trin, så alle trin tjekkes, før siden laves.
+    const ugyldig = steps.findIndex((s) => s.valid && !s.valid());
+    if (ugyldig >= 0) { gaaTil(ugyldig); setFejl(steps[ugyldig].msg ?? ""); return; }
     setArbejder(true); setFejl("");
     try {
       const r = await lavSide(d);
@@ -355,17 +372,13 @@ export function Guide(props: Props) {
           <div className="bar"><div style={{ width: `${Math.round((step / steps.length) * 100)}%` }} /></div>
           <div className="dots">{steps.map((s, i) => (
             <button key={i} className={i < step ? "done" : i === step ? "cur" : ""} title={s.group} aria-label={s.group} onClick={() => gaaTil(i)} />))}</div>
+          {nav}
+          {fejl && <p className="err" style={{ marginTop: -10 }}>{fejl}</p>}
           <p className="saved">Dine svar gemmes automatisk, så du altid kan vende tilbage og fortsætte.</p>
           <p className="intro">{st.intro}</p>
           {st.body}
           {fejl && <p className="err">{fejl}</p>}
-          <div className="nav">
-            <button className="btn" disabled={step === 0} onClick={() => gaaTil(step - 1)}>Tilbage</button>
-            <button className="btn primary" onClick={() => {
-              if (st.valid && !st.valid()) { setFejl(st.msg ?? ""); return; }
-              if (sidst) lav(); else gaaTil(step + 1);
-            }}>{sidst ? "Lav min side" : "Næste"}</button>
-          </div>
+          {nav}
         </div>
         {st.preview && <div className="preview-wrap"><p className="preview-head">Forhåndsvisning</p><div className="preview">{side(false)}</div></div>}
       </div>

@@ -46,7 +46,8 @@ label.l { display:block; font-weight:600; margin:16px 0 6px; }
 .emne h4 { margin:0 0 6px; font-size:16px; }
 .emne .bg { font-size:13px; color:#4b5563; margin:0 0 4px; }
 .emne .veje { font-size:13px; color:var(--ui-muted); margin:0 0 6px; }
-.nav { display:flex; justify-content:space-between; gap:10px; margin-top:22px; }
+.nav { display:flex; justify-content:space-between; align-items:center; gap:10px; margin:22px 0; flex-wrap:wrap; }
+.btn.link { border-color:transparent; background:none; color:var(--ui-brand); text-decoration:underline; padding-left:6px; padding-right:6px; }
 .btn { display:inline-block; border:1px solid #d1d5db; background:#fff; border-radius:8px; padding:9px 16px; cursor:pointer; color:var(--ui-text); text-decoration:none; }
 .btn.primary { background:var(--ui-brand); border-color:var(--ui-brand); color:#fff; font-weight:600; }
 .btn.small { padding:5px 10px; font-size:13px; }
