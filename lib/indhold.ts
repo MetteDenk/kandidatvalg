@@ -120,7 +120,7 @@ export function nyData(): KandidatData {
 }
 
 const str = (v: unknown, max = 4000) => (typeof v === "string" ? v.slice(0, max) : "");
-const BILLED_URL = /^\/api\/uploads\/[a-zA-Z0-9._-]+$/;
+const BILLED_URL = /^\/api\/uploads\/[a-z0-9]+$/;
 
 // Lægger gemte eller indsendte data oven på en tom struktur, så manglende
 // eller ukendte felter aldrig vælter siden. Alt ukendt smides væk.

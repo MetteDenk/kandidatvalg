@@ -1,42 +1,56 @@
-# Deploy: Hetzner + Coolify + PostgreSQL
+# Deploy: Scalingo + Brevo + Simply
 
-Psykologkompasset kører som en **separat app** i Coolify med egen database. Fagspejlets app, database og
-domæne røres ikke.
+Psykologkompasset kører hos **Scalingo** (Frankrig, EU) som en selvstændig app med egen database.
+Intet deles med Fagspejlet. Kode: GitHub `MetteDenk/kandidatvalg`, gren `main`.
 
-## 1. Git-repo
+## 1. App og database hos Scalingo
 
-Opret et nyt, privat repo (fx `psykologkompasset`) og push denne mappe til det. Ikke Fagspejlets repo.
+1. Ny app i regionen **osc-fr1** (Paris), fx med navnet `psykologkompasset`.
+2. *Resources*: tilføj **PostgreSQL**, mindste plan. Scalingo sætter selv `SCALINGO_POSTGRESQL_URL`.
+3. *Code*: forbind GitHub-repoet `MetteDenk/kandidatvalg`, gren `main`, og slå automatisk udrulning til.
+4. *Environment*: tilføj variablerne herunder.
+5. Udrul. `Procfile` starter appen (`npm start`) og kører migrationerne efter hver udrulning
+   (`postdeploy: npx prisma migrate deploy`).
 
-## 2. DNS for psykologkompasset.dk
+| Variabel | Værdi |
+|---|---|
+| `DATABASE_URL` | `$SCALINGO_POSTGRESQL_URL` |
+| `APP_URL` | `https://www.psykologkompasset.dk` |
+| `MISTRAL_API_KEY` | ny nøgle fra console.mistral.ai, kun til denne app |
+| `SMTP_HOST` | `smtp-relay.brevo.com` |
+| `SMTP_PORT` | `587` |
+| `SMTP_USER` | SMTP-login fra Brevo (*SMTP & API*) |
+| `SMTP_PASS` | SMTP-nøgle fra Brevo (*SMTP & API*), kun til denne app |
+| `MAIL_FROM` | `Psykologkompasset <noreply@psykologkompasset.dk>` |
 
-| Post | Type | Værdi |
+Nøglerne indsættes kun i Scalingo, aldrig i git eller i en chat. Slå træning på data fra i Mistrals konsol.
+
+## 2. Domæne hos Scalingo
+
+*Settings > Domains*: tilføj `www.psykologkompasset.dk`. Scalingo udsteder selv certifikatet, når DNS peger rigtigt.
+
+## 3. Afsenderdomæne hos Brevo
+
+*Senders, Domains & Dedicated IPs > Domains*: tilføj `psykologkompasset.dk`. Brevo viser de DNS-poster, der skal
+oprettes hos Simply (typisk en `brevo-code`-TXT, DKIM og DMARC). Når de er på plads, trykker man *Verify* hos Brevo.
+
+## 4. DNS hos Simply
+
+| Navn | Type | Værdi |
 |---|---|---|
-| `psykologkompasset.dk` | A | serverens IP |
-| `www.psykologkompasset.dk` | A | serverens IP |
+| `www` | CNAME | `<appnavn>.osc-fr1.scalingo.io` |
+| `@` (psykologkompasset.dk) | Webomdirigering | til `https://www.psykologkompasset.dk` |
+| Brevos poster | TXT/CNAME | som Brevo viser dem i trin 3 |
 
-Ingen wildcard. Kandidatsiderne ligger som stier: `www.psykologkompasset.dk/<navn>`.
-Ingen proxy (fx Cloudflare) foran siden.
+Ingen proxy foran siden.
 
-## 3. Database
+## 5. Efter første udrulning
 
-Ny PostgreSQL-ressource i Coolify, kun til denne app. Migrationerne i `prisma/migrations/` køres automatisk ved
-opstart (`prisma migrate deploy` i Dockerfilen).
+- Log ind med din egen e-mail, og gå guiden igennem.
+- Testsvarene kan lægges ind fra Scalingos konsol (`scalingo run`): `npx tsx scripts/indlaes-testsvar.ts din@email.dk`.
+- Slå backup af databasen til (følger med Scalingos PostgreSQL-planer).
 
-## 4. App i Coolify
+## Alternativ: container
 
-- Ny ressource fra repoet, build pack: **Dockerfile**, port 3000.
-- Domæner: `https://www.psykologkompasset.dk` med omdirigering fra `https://psykologkompasset.dk`.
-- Persistent volume: mount `/data` (billeder).
-- Miljøvariabler:
-  - `DATABASE_URL` fra trin 3
-  - `APP_URL=https://www.psykologkompasset.dk`
-  - `MISTRAL_API_KEY` (sættes af ejeren, aldrig i git). Slå træning på data fra i Mistrals konsol
-  - `SMTP_HOST/PORT/USER/PASS` hos en EU-udbyder og `MAIL_FROM="Psykologkompasset <noreply@psykologkompasset.dk>"`
-  - `UPLOAD_DIR=/data/uploads`
-- Afsenderdomænet skal sættes op hos mailudbyderen (SPF og DKIM for psykologkompasset.dk).
-
-## 5. Efter første deploy
-
-- Log ind med din egen e-mail, og kør guiden igennem.
-- Testsvarene kan lægges ind fra Coolify-terminalen: `npx tsx scripts/indlaes-testsvar.ts din@email.dk`.
-- Slå automatisk backup af databasen og `/data` til i Coolify.
+`Dockerfile` bygger en standalone-container, hvis appen en dag skal køre et andet sted (fx Coolify).
+Billederne ligger i databasen, så der skal ikke bruges en fast disk.

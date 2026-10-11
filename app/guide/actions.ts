@@ -1,7 +1,5 @@
 "use server";
 
-import { readdir, unlink } from "fs/promises";
-import path from "path";
 import { redirect } from "next/navigation";
 import { currentUser, logout } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -75,20 +73,11 @@ export async function saetOffentlig(offentlig: boolean): Promise<{ ok: boolean; 
   return { ok: true, slug: k.slug };
 }
 
-// "Fjern": sletter siden, svarene, teksterne og billederne. Login-kontoen
-// slettes også, så der intet ligger tilbage.
+// "Fjern": sletter siden, svarene, teksterne og alle uploadede billeder (via
+// cascade i databasen). Login-kontoen slettes også, så der intet ligger tilbage.
 export async function sletAlt(): Promise<void> {
   const user = await currentUser();
   if (!user) redirect("/login");
-  const k = await db.kandidat.findUnique({ where: { ownerId: user.id } });
-  if (k) {
-    // Alle billeder, kandidaten har uploadet, også dem der ikke blev brugt.
-    const dir = process.env.UPLOAD_DIR ?? "./data/uploads";
-    const filer = await readdir(dir).catch(() => [] as string[]);
-    for (const f of filer.filter((f) => f.startsWith(k.id + "-"))) {
-      await unlink(path.join(dir, f)).catch(() => {});
-    }
-  }
   await logout();
   await db.user.delete({ where: { id: user.id } });
   redirect("/?slettet=1");

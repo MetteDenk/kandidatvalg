@@ -6,6 +6,7 @@ COPY prisma ./prisma
 RUN npm ci
 
 FROM node:22-alpine AS builder
+ENV NEXT_STANDALONE=1
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -23,5 +24,5 @@ COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/node_modules ./node_modules
 
 EXPOSE 3000
-# UPLOAD_DIR skal være et persistent volume (fx /data/uploads), sat i Coolify.
+
 CMD ["sh", "-c", "node node_modules/prisma/build/index.js migrate deploy && node server.js"]

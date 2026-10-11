@@ -8,7 +8,8 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "db:migrate": "prisma migrate dev",
-    "testsvar": "tsx scripts/indlaes-testsvar.ts"
+    "testsvar": "tsx scripts/indlaes-testsvar.ts",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@prisma/client": "^6.5.0",
@@ -22,8 +23,11 @@
     "@types/nodemailer": "^6.4.17",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "prisma": "^6.5.0",
-    "tsx": "^4.19.2",
+    "prisma": "^6.19.3",
+    "tsx": "^4.23.15",
     "typescript": "^5.7.2"
+  },
+  "engines": {
+    "node": "22.x"
   }
 }

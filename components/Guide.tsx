@@ -247,7 +247,7 @@ export function Guide(props: Props) {
         <label className="l">Billede til toppen (valgfrit)</label>
         <p className="hint">Vises i layoutene Én side og Mærkesags-mosaik.</p>
         <BilledValg url={d.banner} onFil={(f) => upload(f, "banner")} onFjern={() => opdater((x) => { x.banner = null; })} />
-        <p className="hint">JPEG, PNG eller WebP, højst 10 MB.</p>
+        <p className="hint">JPEG, PNG eller WebP, højst 5 MB.</p>
       </>,
     },
     {

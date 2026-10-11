@@ -5,7 +5,7 @@ spørgsmål i en guide, vælger sidens opbygning, layout, farver og billeder, og
 tekst i sit eget sprog. Forløbet følger Fagspejlets Skitse-vej, men **kodebasen er helt selvstændig**: eget repo,
 egen database, eget domæne. Intet deles med Fagspejlet.
 
-Domæne indtil videre: **www.psykologkompasset.dk**. Grundlaget står i `../Flow_skitse_v0.1.md` og `../Spoergsmaal_v0.3.md`.
+Domæne indtil videre: **www.psykologkompasset.dk**. Hosting: Scalingo (EU). Kode: GitHub `MetteDenk/kandidatvalg`. Grundlaget står i `../Flow_skitse_v0.1.md` og `../Spoergsmaal_v0.3.md`.
 
 ## Kom i gang lokalt
 
@@ -36,7 +36,7 @@ Testsvarene fra 11/10-2026 kan lægges ind på en bruger: `npm run testsvar -- d
 | `app/site-actions.ts` | Kontaktformularen. Beskeden sendes til kandidaten og gemmes ikke |
 
 Genbrugt fra Fagspejlet ved kopiering (ikke deling): login med link på mail (`lib/auth.ts`), mailer, Mistral-klienten,
-fonte, billedvisning og paletter/typografier.
+fonte og paletter/typografier. Billeder ligger i databasen (tabellen `Billede`).
 
 ## Tekster og rettelser
 

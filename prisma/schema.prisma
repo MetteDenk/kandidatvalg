@@ -54,4 +54,16 @@ model Kandidat {
   genereretAt DateTime?
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
+  billeder   Billede[]
+}
+
+// Uploadede billeder ligger i databasen, fordi hostingen (Scalingo) ikke har
+// en fast disk. Slettes sammen med kandidaten.
+model Billede {
+  id         String   @id @default(cuid())
+  kandidatId String
+  kandidat   Kandidat @relation(fields: [kandidatId], references: [id], onDelete: Cascade)
+  mime       String
+  data       Bytes
+  createdAt  DateTime @default(now())
 }
