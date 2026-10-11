@@ -100,6 +100,9 @@ export function Guide(props: Props) {
         <label className="l">Kontaktformular</label>
         <div className="radio">{([[true, "Vis kontaktformular"], [false, "Ingen formular"]] as const).map(([v, t]) => (
           <button key={String(v)} className={"tile" + (d.grund.formular === v ? " on" : "")} onClick={() => opdater((x) => { x.grund.formular = v; })}>{t}</button>))}</div>
+        <p className="hint" style={{ marginTop: 18 }}>
+          Du er selv dataansvarlig for dine svar og din side. <a href="/privatliv" target="_blank" rel="noreferrer">Sådan behandles dine oplysninger</a>
+        </p>
       </>,
       valid: () => !!d.grund.navn.trim() && (!!d.grund.email.trim() || !!d.grund.telefon.trim()),
       msg: "Skriv dit navn og mindst en e-mail eller et telefonnummer.",
