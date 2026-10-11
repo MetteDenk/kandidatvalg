@@ -1,0 +1,57 @@
+// Psykologkompasset - datamodel.
+// Ny, selvstændig database. Deler intet med Fagspejlet.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String       @id @default(cuid())
+  email     String       @unique
+  createdAt DateTime     @default(now())
+  tokens    LoginToken[]
+  sessions  Session[]
+  kandidat  Kandidat?
+}
+
+model LoginToken {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+// Én kandidatside pr. bruger. Svar og designvalg ligger som JSON (KandidatData
+// i lib/indhold.ts), de skrevne tekster i `tekster` og kandidatens egne
+// rettelser i `rettelser`. Begge er { [noegle]: { tekst, kilde } }, hvor
+// `kilde` er de stikord, teksten blev lavet ud fra.
+model Kandidat {
+  id         String    @id @default(cuid())
+  ownerId    String    @unique
+  owner      User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  slug       String    @unique
+  data       Json
+  tekster    Json      @default("{}")
+  rettelser  Json      @default("{}")
+  published  Boolean   @default(false)
+  genereretAt DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}

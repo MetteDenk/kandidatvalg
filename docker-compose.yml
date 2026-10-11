@@ -1,0 +1,16 @@
+# Lokal udviklings-database. Produktion bruger Coolifys egen Postgres-ressource
+# (se docs/DEPLOY.md). Port 5434, så den ikke støder sammen med Fagspejlets 5433.
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: psykologkompasset
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5434:5432"
+    volumes:
+      - psykologkompasset-pg-data:/var/lib/postgresql/data
+
+volumes:
+  psykologkompasset-pg-data:

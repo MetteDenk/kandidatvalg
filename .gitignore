@@ -1,0 +1,19 @@
+node_modules/
+.next/
+out/
+build/
+dist/
+
+# Miljø og hemmeligheder - MISTRAL_API_KEY m.m. må aldrig committes
+.env
+.env.local
+.env*.local
+
+# Lokale uploads (persistent volume i produktion)
+data/
+
+npm-debug.log*
+tsconfig.tsbuildinfo
+next-env.d.ts
+.DS_Store
+.claude/settings.local.json
