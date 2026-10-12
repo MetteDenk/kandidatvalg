@@ -149,7 +149,7 @@ export function Guide(props: Props) {
     },
     {
       group: "5. Dine emner",
-      intro: "For hvert emne kan du bruge de tre spørgsmål. \"Mulige veje\" er kun til inspiration. Overskriften er valgfri og bruges på din side.",
+      intro: "For hvert emne kan du bruge de tre spørgsmål. \"Mulige veje\" er kun til inspiration. Overskriften er valgfri og bruges på din side. Du kan også give AI'en en opgave i et felt. Begynd med \"AI:\", fx \"AI: undersøg, hvorfor 10-årsplanen er vigtig for psykologer, og kom med en anbefaling\". Så undersøger den sagen og skriver et forslag, der følger din linje fra de øvrige svar.",
       body: d.valgte.length ? <>{EMNER.filter((e) => d.valgte.includes(e.id)).map((e) => (
         <div className="emne" key={e.id}>
           <h4>{e.id}. {e.titel}</h4>
@@ -164,7 +164,7 @@ export function Guide(props: Props) {
     },
     {
       group: "6. Dine egne emner",
-      intro: "Skriv det, du vil have med, og som ikke stod på listen. Brug gerne de samme tre spørgsmål.",
+      intro: "Skriv det, du vil have med, og som ikke stod på listen. Brug gerne de samme tre spørgsmål. Stikord er nok, og du kan give AI'en en opgave, fx \"AI: undersøg ... og kom med en anbefaling\".",
       body: <>{d.egne.map((_, n) => (
         <div className="emne" key={n}>
           <h4>Eget emne {n + 1}</h4>

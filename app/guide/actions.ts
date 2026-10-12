@@ -6,7 +6,7 @@ import { currentUser, logout } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { ledigSlug, laes } from "@/lib/kandidat";
 import { normaliser, tekstFelter, type TekstLager } from "@/lib/indhold";
-import { skrivTekster, rens } from "@/lib/ai/tekster";
+import { skrivTekster, rens, TEKST_VERSION } from "@/lib/ai/tekster";
 
 async function minKandidat() {
   const user = await currentUser();
@@ -26,17 +26,21 @@ export async function gemData(input: unknown): Promise<{ ok: boolean }> {
 }
 
 // "Lav min side": skriver de felter om, hvis stikord er nye eller ændret,
-// og giver siden en adresse ud fra navnet.
+// eller som er skrevet med en ældre version af tekstskrivningen, og giver
+// siden en adresse ud fra navnet.
 export async function lavSide(input: unknown): Promise<{ ok: boolean; fejl?: string; tekster?: TekstLager; slug?: string }> {
   const k = await minKandidat();
   const data = normaliser(input);
   const { tekster } = laes(k);
   const felter = tekstFelter(data);
-  const mangler = felter.filter((f) => tekster[f.key]?.kilde !== f.raw.trim());
+  const mangler = felter.filter((f) => {
+    const t = tekster[f.key];
+    return !t || t.kilde !== f.raw.trim() || t.v !== TEKST_VERSION;
+  });
 
   let nye: TekstLager = {};
   try {
-    nye = await skrivTekster(mangler, data.grund.post);
+    nye = await skrivTekster(mangler, data.grund.post, felter, data.grund.navn);
   } catch (e) {
     console.error("Tekstskrivning fejlede:", (e as Error).message);
     return { ok: false, fejl: "Teksterne kunne ikke skrives lige nu. Prøv igen om lidt." };

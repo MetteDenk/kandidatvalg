@@ -9,6 +9,7 @@
     "typecheck": "tsc --noEmit",
     "db:migrate": "prisma migrate dev",
     "testsvar": "tsx scripts/indlaes-testsvar.ts",
+    "proev": "tsx scripts/proev-tekster.ts",
     "postinstall": "prisma generate"
   },
   "dependencies": {

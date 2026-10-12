@@ -165,7 +165,8 @@ export function normaliser(input: unknown): KandidatData {
 // Tekstfelterne: hvert felt har en nøgle, kandidatens stikord og spørgsmålet.
 // ---------------------------------------------------------------------------
 export type TekstFelt = { key: string; raw: string; spoergsmaal: string };
-export type TekstLager = Record<string, { tekst: string; kilde: string }>;
+// `v` er den version af tekstskrivningen, teksten blev lavet med (se lib/ai/tekster.ts).
+export type TekstLager = Record<string, { tekst: string; kilde: string; v?: number }>;
 
 export function emneInfo(d: KandidatData, id: string): { titel: string; sp: string; svar: { overskrift?: string; konkret: string; skridt: string; pris: string } } {
   if (id.startsWith("E")) {

@@ -6,7 +6,7 @@
 
 const MISTRAL_URL = "https://api.mistral.ai/v1/chat/completions";
 
-export type MistralModel = "mistral-medium-latest" | "mistral-small-latest";
+export type MistralModel = "mistral-large-latest" | "mistral-medium-latest" | "mistral-small-latest";
 
 export async function callMistral<T>(
   model: MistralModel,

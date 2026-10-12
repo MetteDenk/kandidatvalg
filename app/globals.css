@@ -123,3 +123,6 @@ label.l { display:block; font-weight:600; margin:16px 0 6px; }
 .s-side .post { font-size:13px; opacity:.75; margin-bottom:18px; }
 .preview .s-anker { min-height:100%; }
 .redigerbar { outline:1px dashed color-mix(in srgb, var(--text) 40%, transparent); outline-offset:3px; cursor:text; }
+
+/* Tekster fra guiden kan have flere afsnit (tom linje). */
+.site p { white-space:pre-line; }
