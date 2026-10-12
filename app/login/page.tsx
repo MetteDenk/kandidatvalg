@@ -9,8 +9,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
       <div className="card" style={{ marginTop: 16 }}>
         <h1 style={{ fontSize: 22, margin: "0 0 6px" }}>Log ind</h1>
         <p className="hint" style={{ marginBottom: 16 }}>
-          Skriv din e-mail, så får du et link til at logge ind. Ingen adgangskode. Er du ny, bliver din side oprettet,
-          første gang du logger ind.
+          Skriv din e-mail, så får du et link til at logge ind. Ingen adgangskode.
         </p>
         {params.sendt ? (
           <div className="ok-boks">Tjek din indbakke. Linket virker i 15 minutter.</div>

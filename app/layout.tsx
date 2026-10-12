@@ -2,9 +2,16 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { fontVariables } from "./fonts";
 
+// Ingen beskrivelse og ingen indeksering: siden skal ikke dukke op i
+// søgemaskiner eller AI-svar, så længe den kun er for få personer.
 export const metadata: Metadata = {
   title: "Psykologkompasset",
-  description: "Hjemmesider til kandidater ved personvalget i Dansk Psykolog Forening.",
+  robots: {
+    index: false,
+    follow: false,
+    nocache: true,
+    googleBot: { index: false, follow: false, noimageindex: true },
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
